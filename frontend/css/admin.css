@@ -1,0 +1,178 @@
+/* Admin specific styles */
+
+.admin-logo-icon {
+    background: linear-gradient(135deg, var(--danger), var(--primary)) !important;
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.2) !important;
+}
+
+.admin-badge {
+    background: rgba(244, 63, 94, 0.15) !important;
+    color: var(--danger) !important;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    font-size: 0.65rem !important;
+}
+
+/* Admin Dashboard Layout */
+.admin-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+    margin-top: 1rem;
+}
+
+.admin-table-card {
+    padding: 2rem !important;
+}
+
+/* Modern Glassmorphic Table */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-card);
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.admin-table th {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-secondary);
+    font-family: var(--font-outfit);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-card);
+}
+
+.admin-table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+.admin-table tbody tr {
+    transition: var(--transition);
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Active Status Badges */
+.status-badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.status-badge.active {
+    background: var(--success-glow);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.status-badge.active::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px var(--success);
+    animation: blink 2s infinite;
+}
+
+.status-badge.inactive {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.status-badge.inactive::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    display: inline-block;
+    opacity: 0.5;
+}
+
+@keyframes blink {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+/* Session token block styling */
+.token-display {
+    font-family: monospace;
+    font-size: 0.8rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--secondary);
+    max-width: 140px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Action Buttons in tables */
+.btn-revoke {
+    background: linear-gradient(135deg, var(--danger), #c084fc);
+    background: linear-gradient(135deg, var(--danger), #be123c);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-outfit);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-revoke:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--danger-glow);
+}
+
+.btn-revoke:active {
+    transform: translateY(0);
+}
+
+/* Styles for loading skeleton */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+}

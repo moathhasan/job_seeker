@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSeeker - AI Multi-Platform Auto-Apply & ATS Resume Optimizer</title>
+    <meta name="description" content="JobSeeker AI is a premium multi-platform job application assistant and ATS resume optimizer. Tailor your CV, analyze resume keyword density, and auto-apply to jobs.">
+    <meta name="keywords" content="job seeker, resume builder, ATS optimizer, resume feedback, auto apply, job search, tech job board, resume tailor, CV optimizer">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/">
+    <meta property="og:title" content="JobSeeker - AI Multi-Platform Auto-Apply & ATS Resume Optimizer">
+    <meta property="og:description" content="Optimize your resume for applicant tracking systems (ATS) and auto-apply across top job boards instantly.">
+    <meta property="og:image" content="/favicon.svg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="/">
+    <meta property="twitter:title" content="JobSeeker - AI Multi-Platform Auto-Apply & ATS Resume Optimizer">
+    <meta property="twitter:description" content="Optimize your resume for applicant tracking systems (ATS) and auto-apply across top job boards instantly.">
+    <meta property="twitter:image" content="/favicon.svg">
+
+    <!-- JSON-LD Structured Data for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "JobSeeker AI",
+      "url": "/",
+      "description": "An AI-powered job application assistant that optimizes resumes for ATS and automates application submissions across multiple platforms.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Requires HTML5."
+    }
+    </script>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- DOMPurify for XSS protection -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+<body>
+
+    <!-- Authentication Screen (Shown if not logged in) -->
+    <div id="auth-screen" class="auth-container" style="display: none;">
+        <div class="glass-card auth-card">
+            <div class="logo" style="justify-content: center; margin-bottom: 2rem;">
+                <div class="logo-icon">J</div>
+                <div class="logo-text">JobSeeker</div>
+            </div>
+            
+            <div id="guest-auth-notice" class="recommendation-card" style="display: none; border-left-color: var(--danger); margin-bottom: 1.5rem; background: rgba(244, 63, 94, 0.05); text-align: left;">
+                <i class="fa-solid fa-lock" style="color: var(--danger); margin-right: 0.5rem;"></i>
+                <b style="color: var(--danger);">Free Scan Limit Reached!</b>
+                <p style="margin-top: 0.25rem; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">You've used your free search scan. Please sign in or register a new candidate account to continue searching, auto-applying, and tailoring your CV.</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form-wrapper">
+                <h3 class="auth-title">Welcome Back</h3>
+                <p class="auth-subtitle">Sign in to search jobs and optimize your resume</p>
+                <form id="login-form" onsubmit="event.preventDefault();">
+                    <div class="input-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" class="form-control" required placeholder="Enter username">
+                    </div>
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
+                    </div>
+                    <div id="login-error" class="auth-error" style="display: none; color: var(--danger); font-size: 0.8rem; margin-top: 0.75rem;"></div>
+                    <button type="submit" class="btn-primary" id="login-btn" style="width: 100%; margin-top: 1.5rem;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                    </button>
+                </form>
+                <div class="auth-footer">
+                    Don't have an account? <a href="#" id="show-register-btn">Create one</a> | <a href="/admin.html">Admin Portal</a>
+                    <div style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.5;">Powered by Line Driven Solution</div>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form-wrapper" style="display: none;">
+                <h3 class="auth-title">Create Account</h3>
+                <p class="auth-subtitle">Start organizing and auto-applying to jobs</p>
+                <form id="register-form" onsubmit="event.preventDefault();">
+                    <div class="input-group">
+                        <label for="register-username">Username</label>
+                        <input type="text" id="register-username" class="form-control" required placeholder="Choose username">
+                    </div>
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" class="form-control" required placeholder="you@example.com">
+                    </div>
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" class="form-control" required placeholder="••••••••">
+                    </div>
+                    <div id="register-error" class="auth-error" style="display: none; color: var(--danger); font-size: 0.8rem; margin-top: 0.75rem;"></div>
+                    <button type="submit" class="btn-primary" id="register-btn" style="width: 100%; margin-top: 1.5rem;">
+                        <i class="fa-solid fa-user-plus"></i> Register
+                    </button>
+                </form>
+                <div class="auth-footer">
+                    Already have an account? <a href="#" id="show-login-btn">Sign in</a> | <a href="/admin.html">Admin Portal</a>
+                    <div style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.5;">Powered by Line Driven Solution</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="app-content" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">J</div>
+                <div class="logo-text">JobSeeker</div>
+            </div>
+            
+            <ul class="nav-links" role="navigation" aria-label="Main navigation">
+                <li class="nav-item active" data-target="section-dashboard">
+                    <a href="#dashboard" role="button" tabindex="0"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Dashboard</a>
+                </li>
+                <li class="nav-item" data-target="section-optimizer">
+                    <a href="#optimizer" role="button" tabindex="0"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> CV Optimizer</a>
+                </li>
+                <li class="nav-item" data-target="section-settings">
+                    <a href="#settings" role="button" tabindex="0"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Settings</a>
+                </li>
+                <li class="nav-item" id="nav-logout-btn">
+                    <a href="#logout" role="button" tabindex="0" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>Version 1.0.0</p>
+                <p>&copy; 2026 JobSeeker AI</p>
+                <p style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--primary); font-weight: 500;">Powered by Line Driven Solution</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button id="mobile-menu-toggle" aria-label="Toggle navigation menu" style="display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer;">
+                        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                    </button>
+                    <div class="page-title">
+                        <h1 id="header-title">Dashboard</h1>
+                        <p id="header-subtitle">Analyze your CV, search jobs, and auto-apply across platforms.</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div id="guest-mode-badge" style="display: none; background: rgba(99, 102, 241, 0.15); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.8rem; padding: 0.35rem 0.75rem; border-radius: 30px; font-weight: 600;">
+                        <i class="fa-solid fa-gift" style="color: var(--secondary); margin-right: 0.35rem;"></i> Guest Mode: 1 Free Scan Remaining
+                    </div>
+                    <div class="user-profile-badge" id="user-profile-badge-box">
+                        <div class="avatar" id="avatar-letters">JS</div>
+                        <span id="profile-display-name">Job Seeker</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- SECTION: DASHBOARD -->
+            <div id="section-dashboard" class="page-section active">
+                <!-- Stats Row -->
+                <div class="stats-grid">
+                    <div class="glass-card stat-card primary">
+                        <div class="stat-info">
+                            <p>Matches Found</p>
+                            <h3 id="stat-matches">0</h3>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <div class="glass-card stat-card secondary">
+                        <div class="stat-info">
+                            <p>Avg ATS Score</p>
+                            <h3 id="stat-ats">--%</h3>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-gauge-high"></i>
+                        </div>
+                    </div>
+                    <div class="glass-card stat-card success">
+                        <div class="stat-info">
+                            <p>Auto-Applied</p>
+                            <h3 id="stat-applied">0</h3>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <div class="glass-card stat-card warning">
+                        <div class="stat-info">
+                            <p>Tailored CVs</p>
+                            <h3 id="stat-tailored">0</h3>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left Column: CV Management -->
+                    <div class="glass-card cv-manager-card">
+                        <div class="card-header">
+                            <h3 style="font-family: var(--font-outfit); margin-bottom: 0.5rem;"><i class="fa-solid fa-file-arrow-up"></i> Manage CV</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Upload your CV (PDF or DOCX) to extract keywords and align with jobs.</p>
+                        </div>
+
+                        <!-- Drag and Drop Zone -->
+                        <div class="upload-zone" id="cv-dropzone" style="position: relative; overflow: hidden;">
+                            <input type="file" id="cv-file-input" style="display: none;" accept=".pdf,.docx,.txt">
+                            
+                            <!-- Standard state -->
+                            <div id="cv-upload-prompt">
+                                <div class="upload-icon">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </div>
+                                <h4>Drag & Drop CV here</h4>
+                                <p>or click to browse files (PDF, DOCX up to 5MB)</p>
+                            </div>
+
+                            <!-- Progress/Loading state -->
+                            <div id="cv-upload-progress-container" style="display: none; padding: 1rem 0;">
+                                <div class="upload-icon" style="animation: pulse 1.5s infinite; color: var(--primary);">
+                                    <i class="fa-solid fa-file-invoice" style="font-size: 2.5rem;"></i>
+                                </div>
+                                <h4 id="cv-progress-title" style="margin-bottom: 0.75rem; font-family: var(--font-outfit);">Uploading CV...</h4>
+                                <div style="width: 100%; max-width: 280px; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 10px; margin: 0 auto 0.75rem auto; overflow: hidden; position: relative;">
+                                    <div id="cv-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; transition: width 0.15s ease-out;"></div>
+                                </div>
+                                <span id="cv-progress-percent" style="font-size: 0.85rem; font-weight: 600; color: var(--secondary);">0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Parsed Profile Details (Initially Hidden) -->
+                        <div id="cv-profile-box" class="cv-profile-details" style="display: none;">
+                            <div class="profile-item">
+                                <label>Candidate Name</label>
+                                <div id="cv-name">-</div>
+                            </div>
+                            <div class="profile-item">
+                                <label>Contact Info</label>
+                                <div id="cv-contact" style="font-size: 0.85rem; color: var(--text-secondary);">-</div>
+                            </div>
+                            <div class="profile-item">
+                                <label>Extracted Skills</label>
+                                <div class="skills-container" id="cv-skills-list">
+                                    <!-- Dynamic skill tags -->
+                                </div>
+                            </div>
+                            <div class="profile-item">
+                                <label>Experience Summary</label>
+                                <div id="cv-experience" style="margin-top: 0.25rem;">-</div>
+                            </div>
+                            <div class="profile-item">
+                                <label>Education</label>
+                                <div id="cv-education" style="margin-top: 0.25rem;">-</div>
+                            </div>
+                            <button class="btn-secondary" id="reupload-cv-btn" style="margin-top: 1rem; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-file-arrow-up"></i> Upload Different CV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Jobs & Search -->
+                    <div class="glass-card job-search-panel">
+                        <div class="card-header">
+                            <h3 style="font-family: var(--font-outfit); margin-bottom: 0.5rem;"><i class="fa-solid fa-magnifying-glass-job"></i> Explore Jobs</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Search and match jobs against your profile across platforms.</p>
+                        </div>
+
+                        <!-- Filters Row -->
+                        <div class="search-filters-row">
+                            <div class="input-group">
+                                <label for="search-title">Job Title</label>
+                                <input type="text" id="search-title" class="form-control" placeholder="e.g. Software Engineer, React">
+                            </div>
+                            <div class="input-group">
+                                <label for="search-location">Location</label>
+                                <input type="text" id="search-location" class="form-control" placeholder="e.g. Remote, Austin">
+                            </div>
+                            <div class="input-group">
+                                <label for="search-platform">Platform</label>
+                                <select id="search-platform" class="form-control">
+                                    <option value="All">All Platforms</option>
+                                    <optgroup label="General Job Boards">
+                                        <option value="Google Jobs">Google Jobs</option>
+                                        <option value="LinkedIn">LinkedIn</option>
+                                        <option value="Indeed">Indeed</option>
+                                        <option value="ZipRecruiter">ZipRecruiter</option>
+                                        <option value="Monster">Monster</option>
+                                        <option value="CareerBuilder">CareerBuilder</option>
+                                    </optgroup>
+                                    <optgroup label="Remote Work Platforms">
+                                        <option value="We Work Remotely">We Work Remotely</option>
+                                        <option value="FlexJobs">FlexJobs</option>
+                                        <option value="Remote.co">Remote.co</option>
+                                        <option value="Working Nomads">Working Nomads</option>
+                                    </optgroup>
+                                    <optgroup label="Tech & Freelance">
+                                        <option value="Dice">Dice</option>
+                                        <option value="Upwork">Upwork</option>
+                                        <option value="Fiverr">Fiverr</option>
+                                        <option value="Toptal">Toptal</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="search-filters-row" style="margin-top: -0.5rem;">
+                            <div class="input-group">
+                                <label for="search-work-type">Work Style</label>
+                                <select id="search-work-type" class="form-control">
+                                    <option value="All">All Styles</option>
+                                    <option value="Remote">Remote</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    <option value="On-site">On-site</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="search-commitment">Commitment</label>
+                                <select id="search-commitment" class="form-control">
+                                    <option value="All">All Types</option>
+                                    <option value="Full-time">Full-time</option>
+                                    <option value="Part-time">Part-time</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Internship">Internship</option>
+                                </select>
+                            </div>
+                            <div class="input-group" style="justify-content: flex-end;">
+                                <button class="btn-primary" id="search-btn">
+                                    <i class="fa-solid fa-magnifying-glass"></i> Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Job List Container -->
+                        <div class="job-list" id="jobs-container">
+                            <div style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
+                                <i class="fa-solid fa-briefcase" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>Upload a CV or enter criteria to find jobs</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: CV OPTIMIZER -->
+            <div id="section-optimizer" class="page-section">
+                <div class="glass-card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3 style="font-family: var(--font-outfit);" id="opt-job-title">Optimize CV for Specific Job</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;" id="opt-job-meta">Compare, inject missing keywords, and download targeted versions.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button class="btn-secondary" id="opt-back-btn"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+                            <a id="opt-download-btn" class="btn-primary" style="text-decoration: none;" download>
+                                <i class="fa-solid fa-file-pdf"></i> Download Tailored PDF
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="tailored-view-container">
+                        <!-- Left Panel: Original CV / Tailored Preview -->
+                        <div class="input-group">
+                            <label style="font-weight: 600;">Original Resumed Profile text</label>
+                            <textarea class="cv-editor" id="opt-original-text" readonly placeholder="Upload a CV on the dashboard first..."></textarea>
+                        </div>
+
+                        <!-- Right Panel: Tailored CV Editor -->
+                        <div class="input-group">
+                            <label style="font-weight: 600;">Tailored CV Preview (Generated)</label>
+                            <textarea class="cv-editor" id="opt-tailored-text" placeholder="Generate tailoring to view modifications..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: SETTINGS -->
+            <div id="section-settings" class="page-section">
+                <div class="glass-card settings-card">
+                    <h3 style="font-family: var(--font-outfit); margin-bottom: 1rem;"><i class="fa-solid fa-sliders"></i> Configuration Profile</h3>
+                    
+                    <div class="input-group">
+                        <label for="settings-fullname">Full Name</label>
+                        <input type="text" id="settings-fullname" class="form-control" value="Job Seeker">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="settings-email">Email Address</label>
+                        <input type="email" id="settings-email" class="form-control" value="candidate@seeker.com">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="settings-phone">Phone Number</label>
+                        <input type="text" id="settings-phone" class="form-control" value="(555) 019-2834">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="settings-scraper-api">LinkedIn / Indeed Scraping Simulation Mode</label>
+                        <select id="settings-scraper-api" class="form-control">
+                            <option value="mock">Sandbox Simulation Mode (Instant & Local)</option>
+                            <option value="serp">Connect via RapidAPI / SerpAPI Wrapper (Requires Configuration)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" id="save-settings-btn" style="align-self: flex-start;">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Side Panel Drawer for Detailed ATS Analysis -->
+    <div class="ats-side-panel" id="ats-side-panel">
+        <div class="ats-panel-header">
+            <h3 style="font-family: var(--font-outfit);" id="panel-job-title">Job Title Details</h3>
+            <button class="close-panel-btn" id="close-panel-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p style="color: var(--text-secondary); margin-top: -1rem; font-size: 0.9rem;" id="panel-job-company">Company | Location</p>
+        
+        <hr style="border: none; border-top: 1px solid var(--border-card);">
+
+        <!-- Circular Score Indicator and Analysis -->
+        <div class="ats-score-container">
+            <div class="progress-ring">
+                <svg width="80" height="80">
+                    <circle class="progress-ring-circle-bg" cx="40" cy="40" r="34"></circle>
+                    <circle id="ats-progress-ring-circle" class="progress-ring-circle" cx="40" cy="40" r="34"></circle>
+                </svg>
+                <div class="progress-text" id="panel-ats-score">0%</div>
+            </div>
+            <div>
+                <h4 style="font-family: var(--font-outfit); font-size: 1.1rem; margin-bottom: 0.25rem;">ATS Alignment Rating</h4>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;" id="panel-ats-summary">Checking keyword density and critical skills alignment.</p>
+            </div>
+        </div>
+
+        <!-- ATS Matches breakdown -->
+        <div class="ats-analysis-details">
+            <div class="skill-list-container">
+                <div class="skill-category-title">Matched Keywords</div>
+                <div class="skill-pills" id="panel-matched-skills">
+                    <!-- Dynamic green pills -->
+                </div>
+            </div>
+
+            <div class="skill-list-container" style="margin-top: 0.5rem;">
+                <div class="skill-category-title">Missing Keywords</div>
+                <div class="skill-pills" id="panel-missing-skills">
+                    <!-- Dynamic red pills -->
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation-card">
+            <b>Optimization Suggestions:</b>
+            <ul id="panel-recommendations" style="padding-left: 1.2rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                <!-- recommendations -->
+            </ul>
+        </div>
+
+        <!-- Job Description Summary -->
+        <div class="input-group">
+            <label style="font-weight: 600;">Job Description</label>
+            <div id="panel-job-description" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary); max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-card); white-space: pre-wrap;">
+                Detailed JD text...
+            </div>
+        </div>
+
+        <!-- Actions Panel -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: auto; padding-top: 1rem;">
+            <!-- Apply Actions -->
+            <div style="display: flex; gap: 0.75rem;" id="panel-action-buttons">
+                <!-- Buttons dynamically loaded (Auto-apply or Tailor manual apply) -->
+            </div>
+
+            <!-- Auto apply logger -->
+            <div class="auto-apply-progress-container" id="auto-apply-box" style="display: none;">
+                <div class="progress-log-title" id="auto-apply-progress-title">Auto-Apply Sequence</div>
+                <div class="progress-log-steps" id="auto-apply-steps">
+                    <!-- Steps log -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast-notification" role="alert" aria-live="assertive" aria-atomic="true">
+        <i class="fa-solid fa-circle-info" id="toast-icon" aria-hidden="true"></i>
+        <span id="toast-message">Notification message here.</span>
+    </div>
+
+    <script src="/js/app.js?v=5"></script>
+</body>
+</html>
